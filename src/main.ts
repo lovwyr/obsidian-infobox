@@ -1,4 +1,4 @@
-import { App, Plugin, MarkdownPostProcessorContext } from "obsidian";
+import { App, Plugin, MarkdownPostProcessorContext, Component, MarkdownRenderer } from "obsidian";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -6,6 +6,7 @@ interface InfoboxRow {
   header?: string;
   label?: string;
   value?: string;
+  mvalue?: string;
 }
 
 interface InfoboxData {
@@ -66,6 +67,7 @@ function parseInfoboxYaml(source: string): InfoboxData {
             if (key === "header") currentRow.header = val;
             if (key === "label")  currentRow.label  = val;
             if (key === "value")  currentRow.value  = val;
+            if (key === "mvalue")  currentRow.mvalue  = val;
           }
         }
       } else if (currentRow !== null) {
@@ -76,6 +78,7 @@ function parseInfoboxYaml(source: string): InfoboxData {
           if (key === "header") currentRow.header = val;
           if (key === "label")  currentRow.label  = val;
           if (key === "value")  currentRow.value  = val;
+          if (key === "mvalue")  currentRow.mvalue  = val;
         }
       }
     }
@@ -88,11 +91,24 @@ function parseInfoboxYaml(source: string): InfoboxData {
 
 // ── Renderer ─────────────────────────────────────────────────────────────────
 
+function renderMarkdownValue(
+  el: HTMLElement,
+  markdown: string,
+  app: App,
+  sourcePath: string,
+  component: Component
+): void {
+  // Use MarkdownRenderer to handle [[links]], bold, etc.
+  // We render into a temporary div to potentially clean it up or just append it.
+  MarkdownRenderer.render(app, markdown, el, sourcePath, component);
+}
+
 function renderInfobox(
   data: InfoboxData,
   el: HTMLElement,
   app: App,
-  sourcePath: string
+  sourcePath: string,
+  component: Component
 ): void {
   const classes = ["infobox-container"];
   if (data.type) classes.push(`infobox--${data.type.toLowerCase()}`);
@@ -145,10 +161,16 @@ function renderInfobox(
         const table = box.createEl("table", { cls: "infobox-table" });
         const tbody = table.createEl("tbody");
         for (const row of section.dataRows) {
-          if (row.label !== undefined || row.value !== undefined) {
+          if (row.label !== undefined || row.value !== undefined || row.mvalue !== undefined) {
             const tr = tbody.createEl("tr", { cls: "infobox-data-row" });
             tr.createEl("th", { cls: "infobox-label", text: row.label ?? "" });
-            tr.createEl("td", { cls: "infobox-value", text: row.value ?? "" });
+            if (row.mvalue) {
+              const td = tr.createEl("td", { cls: "infobox-value" });
+              renderMarkdownValue(td, row.mvalue, app, sourcePath, component);
+            }
+            else if (row.value) {
+              tr.createEl("td", { cls: "infobox-value", text: row.value ?? "" });
+            }
           }
         }
       }
@@ -165,7 +187,7 @@ export default class InfoboxPlugin extends Plugin {
       (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
         try {
           const data = parseInfoboxYaml(source);
-          renderInfobox(data, el, this.app, ctx.sourcePath);
+          renderInfobox(data, el, this.app, ctx.sourcePath, this);
         } catch (err) {
           const errorEl = el.createEl("div", { cls: "infobox-error" });
           errorEl.createEl("strong", { text: "Infobox error: " });

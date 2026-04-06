@@ -108,6 +108,10 @@
   word-break: break-word;
 }
 
+.infobox-value p {
+  margin: 0;
+}
+
 /* ---- Error state ---- */
 .infobox-error {
   border: 1px solid var(--color-red, #e03c3c);

@@ -1,4 +1,4 @@
-import { App, Plugin, MarkdownPostProcessorContext, Component, MarkdownRenderer } from "obsidian";
+import { App, Plugin, MarkdownPostProcessorContext, Component, MarkdownRenderChild, MarkdownRenderer } from "obsidian";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -91,25 +91,23 @@ function parseInfoboxYaml(source: string): InfoboxData {
 
 // ── Renderer ─────────────────────────────────────────────────────────────────
 
-function renderMarkdownValue(
+async function renderMarkdownValue(
   el: HTMLElement,
   markdown: string,
   app: App,
   sourcePath: string,
   component: Component
-): void {
-  // Use MarkdownRenderer to handle [[links]], bold, etc.
-  // We render into a temporary div to potentially clean it up or just append it.
-  MarkdownRenderer.render(app, markdown, el, sourcePath, component);
+): Promise<void> {
+  await MarkdownRenderer.render(app, markdown, el, sourcePath, component);
 }
 
-function renderInfobox(
+async function renderInfobox(
   data: InfoboxData,
   el: HTMLElement,
   app: App,
   sourcePath: string,
   component: Component
-): void {
+): Promise<void> {
   const classes = ["infobox-container"];
   if (data.type) classes.push(`infobox--${data.type.toLowerCase()}`);
   const box = el.createEl("div", { cls: classes.join(" ") });
@@ -166,7 +164,7 @@ function renderInfobox(
             tr.createEl("th", { cls: "infobox-label", text: row.label ?? "" });
             if (row.mvalue) {
               const td = tr.createEl("td", { cls: "infobox-value" });
-              renderMarkdownValue(td, row.mvalue, app, sourcePath, component);
+              await renderMarkdownValue(td, row.mvalue, app, sourcePath, component);
             }
             else if (row.value) {
               tr.createEl("td", { cls: "infobox-value", text: row.value ?? "" });
@@ -184,10 +182,12 @@ export default class InfoboxPlugin extends Plugin {
   onload(): void {
     this.registerMarkdownCodeBlockProcessor(
       "infobox",
-      (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+      async (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
         try {
           const data = parseInfoboxYaml(source);
-          renderInfobox(data, el, this.app, ctx.sourcePath, this);
+          const component = new MarkdownRenderChild(el);
+          ctx.addChild(component);
+          await renderInfobox(data, el, this.app, ctx.sourcePath, component);
         } catch (err) {
           const errorEl = el.createEl("div", { cls: "infobox-error" });
           errorEl.createEl("strong", { text: "Infobox error: " });

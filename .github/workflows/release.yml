@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and upload (for example, 1.1.0)
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -14,8 +20,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -23,8 +31,10 @@ jobs:
       - run: npm test
       - run: npm run build
       - name: Verify release tag
+        env:
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: |
-          node -e 'const manifest = require("./manifest.json"); const pkg = require("./package.json"); if (process.env.GITHUB_REF_NAME !== manifest.version || manifest.version !== pkg.version) throw new Error("Tag, manifest, and package versions must match");'
+          node -e 'const manifest = require("./manifest.json"); const pkg = require("./package.json"); if (process.env.RELEASE_TAG !== manifest.version || manifest.version !== pkg.version) throw new Error("Tag, manifest, and package versions must match");'
       - name: Attest release assets
         uses: actions/attest@v4
         with:
@@ -32,7 +42,29 @@ jobs:
             main.js
             manifest.json
             styles.css
-      - name: Create draft release
+      - name: Publish release assets
+        id: release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: ${{ github.event.inputs.tag || github.ref_name }}
+          generate_release_notes: true
+          files: |
+            main.js
+            manifest.json
+            styles.css
+          fail_on_unmatched_files: true
+          overwrite_files: true
+      - name: Verify uploaded release assets
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --draft --generate-notes main.js manifest.json styles.css
+          RELEASE_ASSETS: ${{ steps.release.outputs.assets }}
+        run: |
+          node -e '
+            const assets = JSON.parse(process.env.RELEASE_ASSETS);
+            const names = new Set(assets.map((asset) => asset.name));
+            const required = ["main.js", "manifest.json", "styles.css"];
+            const missing = required.filter((name) => !names.has(name));
+            if (missing.length > 0) {
+              throw new Error("Missing release assets: " + missing.join(", "));
+            }
+          '

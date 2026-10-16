@@ -2,7 +2,7 @@
   "id": "infobox",
   "name": "Infobox",
   "version": "1.0.0",
-  "minAppVersion": "0.15.0",
+  "minAppVersion": "1.14.4",
   "description": "Render Wikipedia style infoboxes from YAML code blocks.",
   "author": "mpospirit",
   "authorUrl": "https://github.com/mpospirit",

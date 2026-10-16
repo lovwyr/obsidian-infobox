@@ -1,6 +1,6 @@
 {
   "name": "obsidian-infobox",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Renders Wikipedia style infoboxes in Obsidian from YAML code blocks",
   "main": "main.js",
   "type": "module",

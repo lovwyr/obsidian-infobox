@@ -11,6 +11,7 @@
   min-width: 14em;
   max-width: 40%;
   font-size: 0.88em;
+  font-size: calc(var(--font-preferred-size, 1em) * 0.88);
   line-height: 1.5;
 
   border: 1px solid var(--table-border-color, #a2a9b1);

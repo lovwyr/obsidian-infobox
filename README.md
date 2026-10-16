@@ -29,10 +29,12 @@ rows:
 - `title`: The title of the infobox.
 - `image`: The filename of the image to display.
 - `caption`: A caption for the image.
+- `type`: An optional style modifier appended to the infobox CSS class.
 - `rows`: An array of rows to display in the infobox. Each row can be either a header or a label-value pair.
   - `header`: A header row that spans the full width of the infobox.
   - `label`: The label for a label-value pair.
   - `value`: The value for a label-value pair.
+  - `mvalue`: Use instead of `value` for Markdown formatting and Obsidian links.
 
 
 ## Contributing

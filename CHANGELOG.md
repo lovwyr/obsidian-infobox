@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2
+
+- Let note text wrap beside the infobox while keeping a following Table of Contents clear of the float.
+
 ## 1.1.1
 
 - Prevent the infobox float from overlapping following content and blocking clicks.

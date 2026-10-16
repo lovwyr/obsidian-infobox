@@ -2,6 +2,10 @@
    obsidian-infobox — Wikipedia style infobox
    ============================================================ */
 
+.block-language-infobox {
+  display: flow-root;
+}
+
 .infobox-container {
   float: right;
   clear: right;

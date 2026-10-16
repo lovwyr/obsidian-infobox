@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Prevent the infobox float from overlapping following content and blocking clicks.
+
 ## 1.1.0
 
 - Add Markdown-formatted row values, including Obsidian links.

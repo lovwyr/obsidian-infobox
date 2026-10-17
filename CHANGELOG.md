@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4
+
+- Keep infoboxes above surrounding content and clear a following Table of Contents below the float.
+
 ## 1.1.3
 
 - Add Markdown-formatted infobox titles and Obsidian links with `mtitle`.

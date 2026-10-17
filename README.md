@@ -37,6 +37,8 @@ rows:
   - `value`: The value for a label-value pair.
   - `mvalue`: Use instead of `value` for Markdown formatting and Obsidian links.
 
+## Layout
+Infoboxes float to the right on wider panes. A following Table of Contents is cleared below the infobox, and infoboxes display above nearby content.
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.

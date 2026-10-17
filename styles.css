@@ -24,6 +24,14 @@
 
   border-radius: 4px;
   overflow: hidden;
+
+  position: relative;
+  z-index: 1;
+
+}
+
+.markdown-preview-section > div:has(> .block-language-table-of-contents) {
+  clear: right;
 }
 
 /* ---- Title ---- */

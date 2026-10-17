@@ -4,6 +4,7 @@ import { parseInfoboxYaml } from "../src/infobox-parser.ts";
 
 test("parses infobox metadata and all row variants", () => {
   const data = parseInfoboxYaml(`title: "The Beatles"
+mtitle: "**The Beatles**"
 image: beatles.png
 caption: "Four members"
 type: band
@@ -17,6 +18,7 @@ rows:
 
   assert.deepEqual(data, {
     title: "The Beatles",
+    mtitle: "**The Beatles**",
     image: "beatles.png",
     caption: "Four members",
     type: "band",

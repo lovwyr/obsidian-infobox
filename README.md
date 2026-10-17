@@ -9,7 +9,7 @@ Plugin to render Wikipedia style infoboxes in Obsidian.
 Create a code block with the language set to `infobox` and add your infobox content inside.
 
 ```infobox
-title: The Beatles
+mtitle: "**The Beatles**"
 image: thebeatles.png
 caption: Left to right: Paul McCartney, Ringo Starr, George Harrison, John Lennon
 rows:
@@ -27,6 +27,7 @@ rows:
 
 ## Supported fields
 - `title`: The title of the infobox.
+- `mtitle`: Use instead of `title` for Markdown formatting and Obsidian links.
 - `image`: The filename of the image to display.
 - `caption`: A caption for the image.
 - `type`: An optional style modifier appended to the infobox CSS class.

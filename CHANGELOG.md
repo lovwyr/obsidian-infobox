@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3
+
+- Add Markdown-formatted infobox titles and Obsidian links with `mtitle`.
+
 ## 1.1.2
 
 - Let note text wrap beside the infobox while keeping a following Table of Contents clear of the float.

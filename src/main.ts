@@ -24,7 +24,10 @@ async function renderInfobox(
   if (data.type) classes.push(`infobox--${data.type.toLowerCase()}`);
   const box = el.createEl("div", { cls: classes.join(" ") });
 
-  if (data.title) {
+  if (data.mtitle) {
+    const titleEl = box.createEl("div", { cls: "infobox-title" });
+    await renderMarkdownValue(titleEl, data.mtitle, app, sourcePath, component);
+  } else if (data.title) {
     box.createEl("div", { cls: "infobox-title", text: data.title });
   }
 

@@ -7,6 +7,7 @@ export interface InfoboxRow {
 
 export interface InfoboxData {
   title?: string;
+  mtitle?: string;
   image?: string;
   caption?: string;
   type?: string;
@@ -39,6 +40,7 @@ export function parseInfoboxYaml(source: string): InfoboxData {
       const key = line.slice(0, colonIdx).trim();
       const value = stripQuotes(line.slice(colonIdx + 1).trim());
       if (key === "title")   data.title   = value;
+      if (key === "mtitle")  data.mtitle  = value;
       if (key === "image")   data.image   = value;
       if (key === "caption") data.caption = value;
       if (key === "type")    data.type    = value;
